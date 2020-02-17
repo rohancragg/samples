@@ -6,6 +6,6 @@ spec:
   type: state.redis
   metadata:
   - name: "redisHost"
-    value: "YOUR_REDIS_HOST_HERE"
+    value: "redis-master:6379"
   - name: "redisPassword"
-    value: "YOUR_REDIS_PASSWORD_HERE"
+    value: "5s9KKNxsts"
