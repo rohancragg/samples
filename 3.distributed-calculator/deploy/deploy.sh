@@ -32,16 +32,21 @@ kubectl apply -f ./deploy/react-calculator.yaml -n=dapr-calc
 
 kubectl get pods -n=dapr-calc -w
 
-kubectl get svc nodeapp -n=dapr-calc -w
+kubectl get svc -n=dapr-calc -w
 
-export NODE_APP=$(kubectl get svc nodeapp -n=dapr-calc --output 'jsonpath={.status.loadBalancer.ingress[0].ip}')
+export REACT_APP=$(kubectl get svc calculator-front-end -n=dapr-calc --output 'jsonpath={.status.loadBalancer.ingress[0].ip}')
 
-kubectl apply -f ./deploy/python.yaml -n=dapr-calc
-kubectl get pods --selector=app=python -n=dapr-calc -w
+start "http://$REACT_APP"
 
-kubectl logs --selector=app=node -c node -n=dapr-calc
+kubectl logs --selector=app=calculator-front-end -c calculator-front-end -n=dapr-calc
 
-curl $NODE_APP/order
+### STOP HERE ###
+
+kubectl logs --selector=app=divide -c divide -n=dapr-calc
+kubectl logs --selector=app=add -c add -n=dapr-calc
+kubectl logs --selector=app=subtract -c subtract -n=dapr-calc
+kubectl logs --selector=app=multiply -c multiply -n=dapr-calc
+
 
 ### STOP HERE ###
 ### Now remove everything!
@@ -49,3 +54,4 @@ curl $NODE_APP/order
 cd deploy
 kubectl delete -f . -n=dapr-calc
 helm delete redis -n=dapr-calc
+cd ..
