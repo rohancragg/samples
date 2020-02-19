@@ -2,7 +2,7 @@
 cd 2.hello-kubernetes/
 
 # Set kube context to use
-kubectl config use-context aks-sec-cluster-dev-weu
+kubectl config use-context rgc-demo-dapr-k8s
 
 # Install Redis
 helm install redis stable/redis -n=dapr-hello

@@ -2,7 +2,7 @@
 cd 3.distributed-calculator
 
 # Set kube context to use
-kubectl config use-context aks-sec-cluster-dev-weu
+kubectl config use-context rgc-demo-dapr-k8s
 
 kubectl create ns dapr-calc
 
