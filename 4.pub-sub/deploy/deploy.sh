@@ -48,3 +48,5 @@ kubectl delete -f ./deploy/node-subscriber.yaml -n=dapr-pubsub
 kubectl delete -f ./deploy/python-subscriber.yaml -n=dapr-pubsub
 kubectl delete -f ./deploy/redis.yaml -n=dapr-pubsub
 helm delete redis -n=dapr-pubsub
+
+kubectl delete ns dapr-pubsub
