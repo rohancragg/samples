@@ -1,3 +1,4 @@
+$sub='044b1a5d-735a-4fac-91a2-677d3e1ad96b'
 $setupFolder = "./utils/base-templates"
 $deployFolder = "./deploy"
 $pythonName = "python-function-publisher"
@@ -10,6 +11,8 @@ $pythonFolder = "$sourceFolder/$pythonName"
 $dotnetFolder = "$sourceFolder/$dotnetName"
 $javascriptFolder = "$sourceFolder/$javascriptName"
 
+az login
+az account set -s $sub
 
 # Prompts
 $resourceBase = Read-Host -Prompt "Enter resource name base"
