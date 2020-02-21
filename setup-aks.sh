@@ -1,15 +1,20 @@
-
 # based on https://github.com/dapr/docs/blob/master/getting-started/cluster/setup-aks.md
 sub='044b1a5d-735a-4fac-91a2-677d3e1ad96b'
-rg='RG-DevBeer-Feb2020'
-cl='rgc-demo-dapr-k8s'
+resourceBase='rgcdaprdemo' #Read-Host -Prompt "Enter resource name base"
+rg=rg-$resourceBase
+cl=$resourceBase-cluster
 region='westeurope'
 
 USERNAME=rohanc
 
+echo "
+************************************************************************************************************
+AKS cluster '$cl' will be created in resource group '$rg'
+************************************************************************************************************"
+
 az login
 az account set -s $sub
-az group create --name $rg --location $region
+az group create --name $rg --location $region --tags Owner="Rohan Cragg" Environment="Demo"
 az aks create --resource-group $rg --name $cl --node-count 2 --kubernetes-version 1.15.7 --enable-addons http_application_routing --enable-rbac --generate-ssh-keys
 az aks get-credentials -n $cl -g $rg
 
@@ -43,3 +48,8 @@ helm install dapr dapr/dapr --namespace dapr-system
 kubectl get pods -n dapr-system -w
 
 kubectl create clusterrolebinding kubernetes-dashboard -n kube-system --clusterrole=cluster-admin --serviceaccount=kube-system:kubernetes-dashboard
+
+
+####
+# cleanup
+#az group delete --name $rg

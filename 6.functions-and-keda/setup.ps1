@@ -24,15 +24,17 @@ $registryName="${resourceBase}reg"
 $storageName = "${resourceBase}sa"
 
 # Resource Group
-Write-Host
-Write-Host "Creating resource group $groupName..."
-az group create -n $groupName -l $location --tags Owner="Rohan Cragg" Environment="Demo"
+# already created in samples/setup-aks.sh
+#Write-Host
+#Write-Host "Creating resource group $groupName..."
+#az group create -n $groupName -l $location --tags Owner="Rohan Cragg" Environment="Demo"
 
 # AKS
-Write-Host
-Write-Host "Creating AKS cluster $clusterName..."
-az aks create -g $groupName -n $clusterName --generate-ssh-keys
-az aks get-credentials -n $clusterName -g $groupName
+# already created in samples/setup-aks.sh
+#Write-Host
+#Write-Host "Creating AKS cluster $clusterName..."
+#az aks create -g $groupName -n $clusterName --generate-ssh-keys
+#az aks get-credentials -n $clusterName -g $groupName
 
 # ACR
 Write-Host
@@ -45,7 +47,6 @@ Write-Host
 Write-Host "Connecting ACR and AKS..."
 az role assignment create --assignee $CLIENT_ID --role acrpull --scope $ACR_ID
 az acr login -n $registryName
-
 
 # Install Dapr
 Write-Host
@@ -132,3 +133,15 @@ kubectl logs -l=app=python-function-publisher -c=python-function-publisher -f
 kubectl logs -l=app=javascript-function-subscriber -c=javascript-function-subscriber -f
 # open in another terminal
 kubectl logs -l=app=csharp-function-subscriber -c=csharp-function-subscriber -f
+
+### Clean up
+kubectl delete -f $deployFolder
+
+helm delete keda --namespace keda
+kubectl delete namespace keda
+
+dapr uninstall --kubernetes
+
+helm delete redis -n default
+
+kubectl get po --all-namespaces -w
