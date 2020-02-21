@@ -15,10 +15,10 @@ az login
 az account set -s $sub
 
 # Prompts
-$resourceBase = Read-Host -Prompt "Enter resource name base"
-$location = Read-Host -Prompt "Enter location"
+$resourceBase = 'rgcdemodapr' #Read-Host -Prompt "Enter resource name base"
+$location = 'westeurope' #Read-Host -Prompt "Enter location"
 
-$groupName= "$resourceBase"
+$groupName= $("rg-$resourceBase")
 $clusterName= "$resourceBase" + "-cluster"
 $registryName="${resourceBase}reg"
 $storageName = "${resourceBase}sa"
@@ -26,8 +26,7 @@ $storageName = "${resourceBase}sa"
 # Resource Group
 Write-Host
 Write-Host "Creating resource group $groupName..."
-az group create -n $groupName -l $location
-
+az group create -n $groupName -l $location --tags Owner="Rohan Cragg" Environment="Demo"
 
 # AKS
 Write-Host
@@ -53,6 +52,8 @@ Write-Host
 Write-Host "Installing Dapr on $clusterName..."
 dapr init --kubernetes
 
+kubectl get po --all-namespaces -w
+
 Write-Host
 Write-Host "Installing Redis as the Dapr state store on $clusterName..."
 helm install redis stable/redis --set rbac.create=true
@@ -69,7 +70,13 @@ $redisSecret = [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBas
 # Install KEDA
 Write-Host
 Write-Host "Installing KEDA on $clusterName..."
-func kubernetes install --namespace keda
+#func kubernetes install --namespace keda
+helm repo add kedacore https://kedacore.github.io/charts
+helm repo update
+kubectl create namespace keda
+helm install keda kedacore/keda --namespace keda
+
+kubectl get po --namespace keda -w
 
 #### Application section
 
@@ -89,28 +96,28 @@ $trimmedConnectionString = $CONNECTION_STRING -replace "`"", ""
 $encodedConnectionString = [System.Convert]::ToBase64String([System.Text.Encoding]::ASCII.GetBytes($trimmedConnectionString))
 
 (Get-Content $setupFolder/python-function-publisher-base.yaml) `
-| Foreach-Object {$_ -replace "IMAGE_NAME", "$registryName.azurecr.io/$pythonName:$tag"}  `
+| Foreach-Object {$_ -replace "IMAGE_NAME", "$registryName.azurecr.io/$pythonName`:$tag"}  `
 | Foreach-Object {$_ -replace "CONNECTION_STRING_B64", $encodedConnectionString}  `
 | Set-Content $deployFolder/python-function-publisher.yaml
                                           
-docker build -t "$registryName.azurecr.io/$pythonName:$tag" $pythonFolder  
-docker push "$registryName.azurecr.io/$pythonName:$tag"          
+docker build -t "$registryName.azurecr.io/$pythonName`:$tag" $pythonFolder  
+docker push "$registryName.azurecr.io/$pythonName`:$tag"          
 
 (Get-Content $setupFolder/csharp-function-subscriber-base.yaml) `
-| Foreach-Object {$_ -replace "IMAGE_NAME", "$registryName.azurecr.io/$dotnetName:$tag"}  `
+| Foreach-Object {$_ -replace "IMAGE_NAME", "$registryName.azurecr.io/$dotnetName`:$tag"}  `
 | Foreach-Object {$_ -replace "CONNECTION_STRING_B64", $encodedConnectionString}  `
 | Set-Content $deployFolder/csharp-function-subscriber.yaml
                                         
-docker build -t "$registryName.azurecr.io/$dotnetName:$tag" $dotnetFolder  
-docker push "$registryName.azurecr.io/$dotnetName:$tag"
+docker build -t "$registryName.azurecr.io/$dotnetName`:$tag" $dotnetFolder  
+docker push "$registryName.azurecr.io/$dotnetName`:$tag"
 
 (Get-Content $setupFolder/javascript-function-subscriber-base.yaml) `
-| Foreach-Object {$_ -replace "IMAGE_NAME", "$registryName.azurecr.io/$javascriptName:$tag"}  `
+| Foreach-Object {$_ -replace "IMAGE_NAME", "$registryName.azurecr.io/$javascriptName`:$tag"}  `
 | Foreach-Object {$_ -replace "CONNECTION_STRING_B64", $encodedConnectionString}  `
 | Set-Content $deployFolder/javascript-function-subscriber.yaml
 
-docker build -t "$registryName.azurecr.io/$javascriptName:$tag" $javascriptFolder  
-docker push "$registryName.azurecr.io/$javascriptName:$tag"
+docker build -t "$registryName.azurecr.io/$javascriptName`:$tag" $javascriptFolder  
+docker push "$registryName.azurecr.io/$javascriptName`:$tag"
 
 # Deploy
 Write-Host
