@@ -71,6 +71,7 @@ $redisSecret = [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBas
 Write-Host
 Write-Host "Installing KEDA on $clusterName..."
 #func kubernetes install --namespace keda
+# using Helm3 as func didnt work: https://keda.sh/deploy/
 helm repo add kedacore https://kedacore.github.io/charts
 helm repo update
 kubectl create namespace keda
@@ -123,3 +124,11 @@ docker push "$registryName.azurecr.io/$javascriptName`:$tag"
 Write-Host
 Write-Host "Deploying application..."
 kubectl apply -f $deployFolder
+
+kubectl get po -w
+# open in another terminal
+kubectl logs -l=app=python-function-publisher -c=python-function-publisher -f
+# open in another terminal
+kubectl logs -l=app=javascript-function-subscriber -c=javascript-function-subscriber -f
+# open in another terminal
+kubectl logs -l=app=csharp-function-subscriber -c=csharp-function-subscriber -f
