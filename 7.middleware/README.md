@@ -48,14 +48,26 @@ docker push <container tag of your choice>
 
 In order for Dapr to acquire access token on your application's behalf, your application needs to be registered with the authorization server of your choice. 
 
-For example, to register with Google APIs, you should visit [Google APIs Console](https://console.developers.google.com) to register your application. You'll need to collect:
+For example, to register with Google APIs, you should visit [Google APIs Console](https://console.developers.google.com) to register your application. You'll need to 
 
-- Client ID
-- Client Secret
-- Scopes, such as "https://www.googleapis.com/auth/userinfo.email"
-  
 For this exercise, you'll set the ```Redirect URL``` to ```http://dummy.com```. This requires you to add a hostname entry to the computer on which you'll test out the scenario. In a production environment, you need to set the ```Redirect URL``` to the proper DNS name associated with your load balancer or ingress controller.
 
+- Create a Project - give it a name
+- Go to **OAuth consent screen**
+    - enter an **Apllication name**
+    - Select Scopes, such as `https://www.googleapis.com/auth/userinfo.email`
+    - enter `dummy.com` into **Authorised domains**
+    - click **Save** at the bottom om the screen
+- Go to **Credentials**
+    - click **+ Create Credentials**
+    - select **OAth client ID**
+    - select *Application type* = **Web Application**
+        - enter a **Name**
+        - under **Authorised redirect URIs** enter `http://dummy.com`
+        - collect:
+            - Client ID
+            - Client Secret
+  
 ## Step 3 - Define custom pipeline
 
 To define a custom pipeline with the OAuth middleware, you need to create a middleware component definition as well as a configuration that defines the custom pipeline.
