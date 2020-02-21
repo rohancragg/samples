@@ -16,7 +16,7 @@ az login
 az account set -s $sub
 az group create --name $rg --location $region --tags Owner="Rohan Cragg" Environment="Demo"
 az aks create --resource-group $rg --name $cl --node-count 2 --kubernetes-version 1.15.7 --enable-addons http_application_routing --enable-rbac --generate-ssh-keys
-az aks get-credentials -n $cl -g $rg
+az aks get-credentials -n $cl -g $rg --overwrite-existing
 
 curl -fsSL -o ~/get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
 chmod 700 ~/get_helm.sh
@@ -33,7 +33,8 @@ kubectl version --client
 
 # Copy Kubernetes Config from Windows to WSL
 # https://devkimchi.com/2018/06/05/running-kubernetes-on-wsl/
-mkdir ~/.kube && cp /mnt/c/Users/$USERNAME/.kube/config ~/.kube
+mkdir ~/.kube
+cp /mnt/c/Users/$USERNAME/.kube/config ~/.kube
 
 kubectl cluster-info
 

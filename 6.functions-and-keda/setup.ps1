@@ -34,7 +34,7 @@ $storageName = "${resourceBase}sa"
 #Write-Host
 #Write-Host "Creating AKS cluster $clusterName..."
 #az aks create -g $groupName -n $clusterName --generate-ssh-keys
-#az aks get-credentials -n $clusterName -g $groupName
+az aks get-credentials -n $clusterName -g $groupName --overwrite-existing
 
 # ACR
 Write-Host
