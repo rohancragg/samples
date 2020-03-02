@@ -34,7 +34,7 @@ kubectl get pods -n=dapr-calc -w
 
 kubectl get svc -n=dapr-calc -w
 
-export REACT_APP=$(kubectl get svc calculator-front-end -n=dapr-calc --output 'jsonpath={.status.loadBalancer.ingress[0].ip}')
+$REACT_APP=$(kubectl get svc calculator-front-end -n=dapr-calc --output 'jsonpath={.status.loadBalancer.ingress[0].ip}')
 
 start "http://$REACT_APP"
 
