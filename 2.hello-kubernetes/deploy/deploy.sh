@@ -50,3 +50,5 @@ curl $NODE_APP/order
 cd deploy
 kubectl delete -f . -n=dapr-hello
 helm delete redis -n=dapr-hello
+kubectl delete ns dapr-hello
+cd ..\..

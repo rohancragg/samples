@@ -54,4 +54,5 @@ kubectl logs --selector=app=multiply -c multiply -n=dapr-calc
 cd deploy
 kubectl delete -f . -n=dapr-calc
 helm delete redis -n=dapr-calc
-cd ..
+kubectl delete ns dapr-calc
+cd ..\..
